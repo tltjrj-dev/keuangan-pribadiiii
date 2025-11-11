@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Aplikasi Keuangan Pribadi</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #111; color: #eee; }
+    .neon { color: #0ff; text-shadow: 0 0 5px #0ff, 0 0 20px #0ff; }
+    table { width:100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 8px; border: 1px solid #444; }
+    th { background: #222; }
+    .btn { padding: 8px 12px; background: #0f0; color: #000; border: none; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1 class="neon">Aplikasi Keuangan Pribadi</h1>
+
+  <div>
+    <span>Total Pemasukan: Rp <span id="totalIncome">0</span></span><br>
+    <span>Total Pengeluaran: Rp <span id="totalExpense">0</span></span><br>
+    <span>Saldo: Rp <span id="balance">0</span></span>
+  </div>
+
+  <button class="btn" id="btnAdd">Tambah Transaksi</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Deskripsi</th><th>Jumlah</th><th>Jenis</th><th>Aksi</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+      <!-- Akan di-isi transaksi -->
+    </tbody>
+  </table>
+
+  <script>
+    const totalIncomeEl = document.getElementById('totalIncome');
+    const totalExpenseEl = document.getElementById('totalExpense');
+    const balanceEl = document.getElementById('balance');
+    const tableBody = document.getElementById('tableBody');
+    const btnAdd = document.getElementById('btnAdd');
+
+    let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+    function updateUI() {
+      tableBody.innerHTML = '';
+      let income = 0, expense = 0;
+      transactions.forEach((t, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${t.desc}</td>
+          <td>Rp ${t.amount}</td>
+          <td>${t.type}</td>
+          <td><button onclick="deleteTx(${idx})">Hapus</button></td>
+        `;
+        tableBody.appendChild(tr);
+        if (t.type === 'Pemasukan') income += t.amount;
+        else expense += t.amount;
+      });
+      totalIncomeEl.textContent = income;
+      totalExpenseEl.textContent = expense;
+      balanceEl.textContent = income - expense;
+      localStorage.setItem('transactions', JSON.stringify(transactions));
+    }
+
+    function deleteTx(idx) {
+      transactions.splice(idx, 1);
+      updateUI();
+    }
+
+    btnAdd.addEventListener('click', () => {
+      const desc = prompt('Deskripsi:');
+      const amount = parseInt(prompt('Jumlah (Rp):'), 10);
+      const type = prompt('Jenis (Pemasukan/Pengeluaran):');
+      if(desc && !isNaN(amount) && (type==='Pemasukan' || type==='Pengeluaran')) {
+        transactions.push({ desc, amount, type });
+        updateUI();
+      } else {
+        alert('Input tidak valid!');
+      }
+    });
+
+    updateUI();
+  </script>
+</body>
+</html>
