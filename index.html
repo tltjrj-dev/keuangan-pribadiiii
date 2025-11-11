@@ -1,83 +1,216 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Aplikasi Keuangan Pribadi</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #111; color: #eee; }
-    .neon { color: #0ff; text-shadow: 0 0 5px #0ff, 0 0 20px #0ff; }
-    table { width:100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { padding: 8px; border: 1px solid #444; }
-    th { background: #222; }
-    .btn { padding: 8px 12px; background: #0f0; color: #000; border: none; cursor: pointer; }
+    * {
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
+    body {
+      font-family: "Poppins", sans-serif;
+      background: radial-gradient(circle at top, #0a0f1a, #000);
+      color: #e0e0e0;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      text-align: center;
+      padding: 2rem 1rem 1rem;
+    }
+    h1 {
+      color: #00eaff;
+      text-shadow: 0 0 10px #00eaff, 0 0 30px #00bfff;
+      letter-spacing: 2px;
+      font-size: 2.2rem;
+    }
+    .summary {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(0, 255, 255, 0.2);
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 1rem 1.5rem;
+      min-width: 180px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    .card h3 {
+      margin: 0;
+      color: #9be7ff;
+    }
+    .card p {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #fff;
+    }
+    .actions {
+      margin: 1rem;
+      text-align: center;
+    }
+    button {
+      background: linear-gradient(90deg, #00bfff, #00eaff);
+      border: none;
+      color: #000;
+      padding: 10px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      box-shadow: 0 0 10px #00eaff, 0 0 20px #00bfff;
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px #00ffff, 0 0 40px #00eaff;
+    }
+    table {
+      width: 90%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+      border-radius: 10px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.05);
+      box-shadow: 0 0 10px rgba(0,255,255,0.1);
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+    }
+    th {
+      background: rgba(0,255,255,0.2);
+      color: #00eaff;
+    }
+    tr:nth-child(even) {
+      background: rgba(255,255,255,0.05);
+    }
+    td button {
+      background: #ff004c;
+      color: #fff;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 0 8px #ff004c;
+    }
+    td button:hover {
+      background: #ff3366;
+    }
+    footer {
+      color: #888;
+      font-size: 0.9rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    @keyframes glow {
+      0%,100% { text-shadow: 0 0 10px #00ffff; }
+      50% { text-shadow: 0 0 20px #00bfff; }
+    }
   </style>
 </head>
 <body>
-  <h1 class="neon">Aplikasi Keuangan Pribadi</h1>
+  <header>
+    <h1>Aplikasi Keuangan Pribadiku</h1>
+    <p>Catat pemasukan dan pengeluaran Anda dengan gaya modern 💎</p>
+  </header>
 
-  <div>
-    <span>Total Pemasukan: Rp <span id="totalIncome">0</span></span><br>
-    <span>Total Pengeluaran: Rp <span id="totalExpense">0</span></span><br>
-    <span>Saldo: Rp <span id="balance">0</span></span>
+  <section class="summary">
+    <div class="card">
+      <h3>Total Pemasukan</h3>
+      <p id="income">Rp 0</p>
+    </div>
+    <div class="card">
+      <h3>Total Pengeluaran</h3>
+      <p id="expense">Rp 0</p>
+    </div>
+    <div class="card">
+      <h3>Saldo</h3>
+      <p id="balance">Rp 0</p>
+    </div>
+  </section>
+
+  <div class="actions">
+    <button id="addBtn">+ Tambah Transaksi</button>
   </div>
-
-  <button class="btn" id="btnAdd">Tambah Transaksi</button>
 
   <table>
     <thead>
       <tr>
-        <th>Deskripsi</th><th>Jumlah</th><th>Jenis</th><th>Aksi</th>
+        <th>Deskripsi</th>
+        <th>Jumlah</th>
+        <th>Jenis</th>
+        <th>Tanggal</th>
+        <th>Aksi</th>
       </tr>
     </thead>
-    <tbody id="tableBody">
-      <!-- Akan di-isi transaksi -->
-    </tbody>
+    <tbody id="transactionTable"></tbody>
   </table>
 
+  <footer>
+    © 2025 Aplikasi Keuangan Pribadi — Desain neon elegan oleh <span style="color:#00eaff;">tltjrj</span>
+  </footer>
+
   <script>
-    const totalIncomeEl = document.getElementById('totalIncome');
-    const totalExpenseEl = document.getElementById('totalExpense');
-    const balanceEl = document.getElementById('balance');
-    const tableBody = document.getElementById('tableBody');
-    const btnAdd = document.getElementById('btnAdd');
+    const addBtn = document.getElementById("addBtn");
+    const incomeEl = document.getElementById("income");
+    const expenseEl = document.getElementById("expense");
+    const balanceEl = document.getElementById("balance");
+    const tableBody = document.getElementById("transactionTable");
 
-    let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+    let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 
-    function updateUI() {
-      tableBody.innerHTML = '';
-      let income = 0, expense = 0;
-      transactions.forEach((t, idx) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${t.desc}</td>
-          <td>Rp ${t.amount}</td>
-          <td>${t.type}</td>
-          <td><button onclick="deleteTx(${idx})">Hapus</button></td>
-        `;
-        tableBody.appendChild(tr);
-        if (t.type === 'Pemasukan') income += t.amount;
-        else expense += t.amount;
-      });
-      totalIncomeEl.textContent = income;
-      totalExpenseEl.textContent = expense;
-      balanceEl.textContent = income - expense;
-      localStorage.setItem('transactions', JSON.stringify(transactions));
+    function formatRupiah(num) {
+      return "Rp " + num.toLocaleString("id-ID");
     }
 
-    function deleteTx(idx) {
-      transactions.splice(idx, 1);
+    function updateUI() {
+      tableBody.innerHTML = "";
+      let income = 0, expense = 0;
+      transactions.forEach((t, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${t.desc}</td>
+          <td>${formatRupiah(t.amount)}</td>
+          <td style="color:${t.type === "Pemasukan" ? "#00ffcc" : "#ff3366"};">${t.type}</td>
+          <td>${t.date}</td>
+          <td><button onclick="deleteTx(${index})">Hapus</button></td>
+        `;
+        tableBody.appendChild(row);
+        if (t.type === "Pemasukan") income += t.amount;
+        else expense += t.amount;
+      });
+      incomeEl.textContent = formatRupiah(income);
+      expenseEl.textContent = formatRupiah(expense);
+      balanceEl.textContent = formatRupiah(income - expense);
+      localStorage.setItem("transactions", JSON.stringify(transactions));
+    }
+
+    function deleteTx(index) {
+      transactions.splice(index, 1);
       updateUI();
     }
 
-    btnAdd.addEventListener('click', () => {
-      const desc = prompt('Deskripsi:');
-      const amount = parseInt(prompt('Jumlah (Rp):'), 10);
-      const type = prompt('Jenis (Pemasukan/Pengeluaran):');
-      if(desc && !isNaN(amount) && (type==='Pemasukan' || type==='Pengeluaran')) {
-        transactions.push({ desc, amount, type });
+    addBtn.addEventListener("click", () => {
+      const desc = prompt("Deskripsi transaksi:");
+      const amount = parseFloat(prompt("Jumlah (angka saja):"));
+      const type = prompt("Jenis: Pemasukan / Pengeluaran");
+      const date = new Date().toLocaleDateString("id-ID");
+      if (desc && !isNaN(amount) && (type === "Pemasukan" || type === "Pengeluaran")) {
+        transactions.push({ desc, amount, type, date });
         updateUI();
       } else {
-        alert('Input tidak valid!');
+        alert("Input tidak valid!");
       }
     });
 
